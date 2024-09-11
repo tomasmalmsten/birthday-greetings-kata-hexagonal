@@ -1,50 +1,41 @@
-package it.xpug.kata.birthday_greetings;
+package it.xpug.kata.birthday_greetings
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.text.SimpleDateFormat
+import java.util.*
 
-public class XDate {
+class XDate {
+    private val date: Date
 
-	private Date date;
+    constructor() {
+        date = Date()
+    }
 
-	public XDate() {
-		date = new Date();
-	}
+    constructor(yyyyMMdd: String?) {
+        date = SimpleDateFormat("yyyy/MM/dd").parse(yyyyMMdd)
+    }
 
-	public XDate(String yyyyMMdd) throws ParseException {
-		date = new SimpleDateFormat("yyyy/MM/dd").parse(yyyyMMdd);
-	}
+    val day: Int
+        get() = getPartOfDate(GregorianCalendar.DAY_OF_MONTH)
 
-	public int getDay() {
-		return getPartOfDate(GregorianCalendar.DAY_OF_MONTH);
-	}
+    val month: Int
+        get() = 1 + getPartOfDate(GregorianCalendar.MONTH)
 
-	public int getMonth() {
-		return 1 + getPartOfDate(GregorianCalendar.MONTH);
-	}
+    fun isSameDay(anotherDate: XDate): Boolean {
+        return anotherDate.day == this.day && anotherDate.month == this.month
+    }
 
-	public boolean isSameDay(XDate anotherDate) {
-		return anotherDate.getDay() == this.getDay() && anotherDate.getMonth() == this.getMonth();
-	}
+    override fun hashCode(): Int {
+        return date.hashCode()
+    }
 
-	@Override
-	public int hashCode() {
-		return date.hashCode();
-	}
+    override fun equals(obj: Any?): Boolean {
+        if (obj !is XDate) return false
+        return obj.date == this.date
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof XDate))
-			return false;
-		XDate other = (XDate) obj;
-		return other.date.equals(this.date);
-	}
-
-	private int getPartOfDate(int part) {
-		GregorianCalendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		return calendar.get(part);
-	}
+    private fun getPartOfDate(part: Int): Int {
+        val calendar = GregorianCalendar()
+        calendar.time = date
+        return calendar[part]
+    }
 }

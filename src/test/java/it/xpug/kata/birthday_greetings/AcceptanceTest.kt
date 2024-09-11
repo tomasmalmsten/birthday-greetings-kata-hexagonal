@@ -1,48 +1,51 @@
-package it.xpug.kata.birthday_greetings;
+package it.xpug.kata.birthday_greetings
 
-import static org.junit.Assert.*;
+import com.dumbster.smtp.SimpleSmtpServer
+import com.dumbster.smtp.SmtpMessage
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
 
-import org.junit.*;
+class AcceptanceTest {
+    private lateinit var birthdayService: BirthdayService
+    private lateinit var mailServer: SimpleSmtpServer
 
-import com.dumbster.smtp.*;
+    @Before
+    fun setUp() {
+        mailServer = SimpleSmtpServer.start(NONSTANDARD_PORT)
+        birthdayService = BirthdayService()
+    }
 
+    @After
+    fun tearDown() {
+        mailServer.stop()
+        Thread.sleep(200)
+    }
 
-public class AcceptanceTest {
+    @Test
+    @Throws(Exception::class)
+    fun willSendGreetings_whenItsSomebodysBirthday() {
+        birthdayService.sendGreetings("employee_data.txt", XDate("2008/10/08"), "localhost", NONSTANDARD_PORT)
 
-	private static final int NONSTANDARD_PORT = 9999;
-	private BirthdayService birthdayService;
-	private SimpleSmtpServer mailServer;
+        Assert.assertEquals("message not sent?", 1, mailServer.receivedEmailSize.toLong())
+        val message = mailServer.receivedEmail.next() as SmtpMessage
+        Assert.assertEquals("Happy Birthday, dear John!", message.body)
+        Assert.assertEquals("Happy Birthday!", message.getHeaderValue("Subject"))
+        val recipients = message.getHeaderValues("To")
+        Assert.assertEquals(1, recipients.size.toLong())
+        Assert.assertEquals("john.doe@foobar.com", recipients[0].toString())
+    }
 
-	@Before
-	public void setUp() throws Exception {
-		mailServer = SimpleSmtpServer.start(NONSTANDARD_PORT);
-		birthdayService = new BirthdayService();
-	}
+    @Test
+    @Throws(Exception::class)
+    fun willNotSendEmailsWhenNobodysBirthday() {
+        birthdayService.sendGreetings("employee_data.txt", XDate("2008/01/01"), "localhost", NONSTANDARD_PORT)
 
-	@After
-	public void tearDown() throws Exception {
-		mailServer.stop();
-		Thread.sleep(200);
-	}
+        Assert.assertEquals("what? messages?", 0, mailServer.receivedEmailSize.toLong())
+    }
 
-	@Test
-	public void willSendGreetings_whenItsSomebodysBirthday() throws Exception {
-
-		birthdayService.sendGreetings("employee_data.txt", new XDate("2008/10/08"), "localhost", NONSTANDARD_PORT);
-
-		assertEquals("message not sent?", 1, mailServer.getReceivedEmailSize());
-		SmtpMessage message = (SmtpMessage) mailServer.getReceivedEmail().next();
-		assertEquals("Happy Birthday, dear John!", message.getBody());
-		assertEquals("Happy Birthday!", message.getHeaderValue("Subject"));
-		String[] recipients = message.getHeaderValues("To");
-		assertEquals(1, recipients.length);
-		assertEquals("john.doe@foobar.com", recipients[0].toString());
-	}
-
-	@Test
-	public void willNotSendEmailsWhenNobodysBirthday() throws Exception {
-		birthdayService.sendGreetings("employee_data.txt", new XDate("2008/01/01"), "localhost", NONSTANDARD_PORT);
-
-		assertEquals("what? messages?", 0, mailServer.getReceivedEmailSize());
-	}
+    companion object {
+        private const val NONSTANDARD_PORT = 9999
+    }
 }
