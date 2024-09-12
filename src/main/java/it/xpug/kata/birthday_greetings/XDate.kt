@@ -5,13 +5,13 @@ import java.util.*
 
 class XDate {
     private val date: Date
-
-    constructor() {
-        date = Date()
-    }
-
+    
     constructor(yyyyMMdd: String?) {
-        date = SimpleDateFormat("yyyy/MM/dd").parse(yyyyMMdd)
+        if (yyyyMMdd.isNullOrBlank()) {
+            date = Date()
+        } else {
+            date = SimpleDateFormat("yyyy/MM/dd").parse(yyyyMMdd)
+        }
     }
 
     val day: Int

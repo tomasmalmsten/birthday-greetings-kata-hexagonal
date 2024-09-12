@@ -14,12 +14,6 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 class BirthdayService {
-    @Throws(
-        IOException::class,
-        ParseException::class,
-        AddressException::class,
-        MessagingException::class
-    )
     fun sendGreetings(fileName: String, xDate: XDate, smtpHost: String, smtpPort: Int) {
         val `in` = BufferedReader(FileReader(fileName))
         var str = ""
@@ -31,34 +25,21 @@ class BirthdayService {
                 val recipient = employee.email
                 val body = "Happy Birthday, dear %NAME%".replace("%NAME%", employee.firstName!!)
                 val subject = "Happy Birthday!"
-                sendMessage(smtpHost, smtpPort, "sender@here.com", subject, body, recipient!!)
+                // Create a mail session
+                val props = Properties()
+                props["mail.smtp.host"] = smtpHost
+                props["mail.smtp.port"] = "" + smtpPort
+                val session = Session.getInstance(props, null)
+                // Construct the message
+                val msg: Message = MimeMessage(session)
+                msg.setFrom(InternetAddress("sender@here.com"))
+                msg.setRecipient(Message.RecipientType.TO, InternetAddress(recipient!!))
+                msg.subject = subject
+                msg.setText(body)
+                // Send the message
+                Transport.send(msg)
             }
         }
     }
 
-    @Throws(AddressException::class, MessagingException::class)
-    private fun sendMessage(
-        smtpHost: String,
-        smtpPort: Int,
-        sender: String,
-        subject: String,
-        body: String,
-        recipient: String
-    ) {
-        // Create a mail session
-        val props = Properties()
-        props["mail.smtp.host"] = smtpHost
-        props["mail.smtp.port"] = "" + smtpPort
-        val session = Session.getInstance(props, null)
-
-        // Construct the message
-        val msg: Message = MimeMessage(session)
-        msg.setFrom(InternetAddress(sender))
-        msg.setRecipient(Message.RecipientType.TO, InternetAddress(recipient))
-        msg.subject = subject
-        msg.setText(body)
-
-        // Send the message
-        Transport.send(msg)
-    }
 }
