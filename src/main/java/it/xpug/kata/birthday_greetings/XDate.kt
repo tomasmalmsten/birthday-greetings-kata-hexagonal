@@ -28,9 +28,9 @@ class XDate {
         return date.hashCode()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is XDate) return false
-        return obj.date == this.date
+    override fun equals(other: Any?): Boolean {
+        if (other !is XDate) return false
+        return other.date == this.date
     }
 
     private fun getPartOfDate(part: Int): Int {
