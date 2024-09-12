@@ -29,7 +29,7 @@ class BirthdayService {
             val employee = Employee(employeeData[1], employeeData[0], employeeData[2], employeeData[3])
             if (employee.isBirthday(xDate)) {
                 val recipient = employee.email
-                val body = "Happy Birthday, dear %NAME%!".replace("%NAME%", employee.firstName!!)
+                val body = "Happy Birthday, dear %NAME%".replace("%NAME%", employee.firstName!!)
                 val subject = "Happy Birthday!"
                 sendMessage(smtpHost, smtpPort, "sender@here.com", subject, body, recipient!!)
             }
