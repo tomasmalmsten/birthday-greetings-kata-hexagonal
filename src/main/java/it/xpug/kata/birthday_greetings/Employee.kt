@@ -1,10 +1,10 @@
 package it.xpug.kata.birthday_greetings
 
-data class Employee(
-    val firstName: String?,
-    val lastName: String?,
+class Employee(
+    val firstName: String,
+    val lastName: String,
     val birthDate: String,
-    val email: String?
+    val email: String
 ) {
 
     private val xdate = XDate(birthDate)

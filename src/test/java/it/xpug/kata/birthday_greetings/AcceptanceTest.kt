@@ -1,58 +1,58 @@
-package it.xpug.kata.birthday_greetings;
+package it.xpug.kata.birthday_greetings
 
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
-import jakarta.mail.internet.MimeMessage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import com.icegreen.greenmail.util.GreenMail
+import com.icegreen.greenmail.util.GreenMailUtil
+import com.icegreen.greenmail.util.ServerSetup
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class AcceptanceTest {
-
-    private static final int NONSTANDARD_PORT = 9999;
-    private BirthdayService birthdayService;
-    private GreenMail mailServer;
+class AcceptanceTest {
+    private lateinit var mailServer: GreenMail
+    private val birthdayService: BirthdayService = BirthdayService()
 
     @BeforeEach
-    public void setUp() throws Exception {
-        mailServer = new GreenMail(new ServerSetup(NONSTANDARD_PORT, null, ServerSetup.PROTOCOL_SMTP));
-        mailServer.start();
-        birthdayService = new BirthdayService();
+    fun setUp() {
+        mailServer = GreenMail(ServerSetup(NONSTANDARD_PORT, null, ServerSetup.PROTOCOL_SMTP))
+        mailServer.start()
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
-        mailServer.stop();
+    fun tearDown() {
+        mailServer.stop()
     }
 
     @Test
-    public void willSendGreetings_whenItsSomebodysBirthday() throws Exception {
-        birthdayService.sendGreetings("employee_data.txt", new XDate("2008/10/08"), "localhost", NONSTANDARD_PORT);
+    fun willSendGreetings_whenItsSomebodysBirthday() {
+        birthdayService.sendGreetings("employee_data.txt", XDate("2008/10/08"), "localhost", NONSTANDARD_PORT)
 
-        assertThat(mailServer.getReceivedMessages().length)
-                .as("message not sent?")
-                .isEqualTo(1);
+        assertThat(mailServer.receivedMessages.size)
+            .`as`("message not sent?")
+            .isEqualTo(1)
 
-        MimeMessage message = mailServer.getReceivedMessages()[0];
+        val message = mailServer.receivedMessages[0]
         assertThat(GreenMailUtil.getBody(message))
-                .isEqualTo("Happy Birthday, dear John!");
-        assertThat(message.getSubject())
-                .isEqualTo("Happy Birthday!");
-        assertThat(message.getAllRecipients())
-                .hasSize(1);
-        assertThat(message.getAllRecipients()[0].toString())
-                .isEqualTo("john.doe@foobar.com");
+            .isEqualTo("Happy Birthday, dear John!")
+        assertThat(message.subject)
+            .isEqualTo("Happy Birthday!")
+        assertThat(message.allRecipients)
+            .hasSize(1)
+        assertThat(message.allRecipients[0].toString())
+            .isEqualTo("john.doe@foobar.com")
     }
 
     @Test
-    public void willNotSendEmailsWhenNobodysBirthday() throws Exception {
-        birthdayService.sendGreetings("employee_data.txt", new XDate("2008/01/01"), "localhost", NONSTANDARD_PORT);
+    fun willNotSendEmailsWhenNobodysBirthday() {
+        birthdayService.sendGreetings("employee_data.txt", XDate("2008/01/01"), "localhost", NONSTANDARD_PORT)
 
-        assertThat(mailServer.getReceivedMessages().length)
-                .as("what? messages?")
-                .isZero();
+        assertThat(mailServer.receivedMessages.size)
+            .`as`("what? messages?")
+            .isZero()
+    }
+
+    companion object {
+        private const val NONSTANDARD_PORT = 9999
     }
 }
