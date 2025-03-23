@@ -3,7 +3,7 @@ package it.xpug.kata.birthday_greetings
 class Employee(
     val firstName: String,
     val lastName: String,
-    val birthDate: String,
+    birthDate: String,
     val email: String
 ) {
 
@@ -14,6 +14,6 @@ class Employee(
     }
 
     override fun toString(): String {
-        return "Employee $firstName $lastName <$email> born $birthDate"
+        return "Employee $firstName $lastName <$email> born $xdate"
     }
 }

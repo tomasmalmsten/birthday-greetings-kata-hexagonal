@@ -3,7 +3,7 @@ package it.xpug.kata.birthday_greetings
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class XDate(val date: LocalDate) {
+data class XDate(private val date: LocalDate) {
 
     constructor(yyyyMMdd: String) : this(LocalDate.parse(yyyyMMdd, FORMATTER))
 
@@ -19,5 +19,9 @@ data class XDate(val date: LocalDate) {
 
     companion object {
         private val FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+    }
+
+    override fun toString(): String {
+        return date.toString()
     }
 }
