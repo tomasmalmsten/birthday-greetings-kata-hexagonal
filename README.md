@@ -7,9 +7,6 @@ This is a fork [from this kata](https://github.com/xpmatteo/birthday-greetings-k
 ## Setup
 mvn test runs the tests, they should all be passing to begin with
 
-## How to start
-
-Run all the tests.  One test will fail.  Change production code so that all tests pass.
 
 
 
