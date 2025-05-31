@@ -34,12 +34,9 @@ class BirthdayService {
                     msg.subject = subject
                     msg.setText(body)
                     // Send the message
-                    Thread.sleep(2000L) // simulate slow dependency
                     Transport.send(msg)
                 }
             }
         }
-
     }
-
 }
