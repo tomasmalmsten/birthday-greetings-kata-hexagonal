@@ -25,7 +25,7 @@ class AcceptanceTest {
 
     @Test
     fun willSendGreetings_whenItsSomebodysBirthday() {
-        birthdayService.sendGreetings("employee_data.txt", XDate("2008/10/08"), "localhost", NONSTANDARD_PORT)
+        birthdayService.sendGreetings("../employee_data.txt", XDate("2008/10/08"), "localhost", NONSTANDARD_PORT)
 
         assertThat(mailServer.receivedMessages.size)
             .`as`("message not sent?")
@@ -44,7 +44,7 @@ class AcceptanceTest {
 
     @Test
     fun willNotSendEmailsWhenNobodysBirthday() {
-        birthdayService.sendGreetings("employee_data.txt", XDate("2008/01/01"), "localhost", NONSTANDARD_PORT)
+        birthdayService.sendGreetings("../employee_data.txt", XDate("2008/01/01"), "localhost", NONSTANDARD_PORT)
 
         assertThat(mailServer.receivedMessages.size)
             .`as`("what? messages?")
