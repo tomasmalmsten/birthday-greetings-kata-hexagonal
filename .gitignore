@@ -4,3 +4,7 @@ target
 .idea
 out
 .gitconfig
+
+# Python
+__pycache__/
+*.pyc
